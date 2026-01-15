@@ -231,8 +231,11 @@ class NokiaSROSNode(Node):
         if isinstance(self.labels, dict) and self.labels.get("role"):
             role_value = str(self.labels["role"])
 
-        # Labels are already sanitized in topology.py
-        user_labels = self.labels
+        # Filter out containerlab label from user_labels as we set it explicitly
+        if self.labels:
+            user_labels = {k: v for k, v in self.labels.items() if k != "containerlab"}
+        else:
+            user_labels = {}
 
         # Ensure all values are lowercase and valid
         node_name = self.get_node_name(topology)
@@ -247,6 +250,7 @@ class NokiaSROSNode(Node):
             "node_name": node_name,
             "topology_name": topo_name,
             "role_value": role_value,
+            "user_labels": user_labels,
             "user_labels": user_labels,
             "node_profile": self.get_profile_name(topology),
             "kind": self.EDA_OPERATING_SYSTEM,

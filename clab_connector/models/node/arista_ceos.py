@@ -119,8 +119,11 @@ class AristaCEOSNode(Node):
         if isinstance(self.labels, dict) and self.labels.get("role"):
             role_value = str(self.labels["role"])
 
-        # Labels are already sanitized in topology.py
-        user_labels = self.labels
+        # Filter out containerlab label from user_labels as we set it explicitly
+        if self.labels:
+            user_labels = {k: v for k, v in self.labels.items() if k != "containerlab"}
+        else:
+            user_labels = {}
 
         # Ensure all values are lowercase and valid
         node_name = self.get_node_name(topology)
